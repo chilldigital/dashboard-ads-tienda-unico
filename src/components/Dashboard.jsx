@@ -37,37 +37,27 @@ const Dashboard = () => {
   useEffect(() => { load(); /* eslint-disable-next-line */ }, []);
   useEffect(() => { load(); setStatusFilter("all"); /* eslint-disable-next-line */ }, [range.preset]);
 
-  // Agrupa anuncios por ad_id, ad_name, campaign_id y adset_id, sumando métricas relevantes
+  // Agrupa anuncios por ad_id y suma inversión, revenue y compras
   function groupAds(list) {
-    const grouped = [];
     const groupMap = new Map();
     list.forEach(ad => {
-      const key = `${ad.ad_id}_${ad.ad_name}_${ad.campaign_id || ''}_${ad.adset_id || ''}`;
+      const key = ad.ad_id || `${ad.ad_name}_${ad.campaign || ''}`;
       if (!groupMap.has(key)) {
-        groupMap.set(key, { ...ad });
+        groupMap.set(key, {
+          ...ad,
+          totalcost: parseFloat(ad.totalcost) || 0,
+          action_values_omni_purchase: parseFloat(ad.action_values_omni_purchase) || 0,
+          actions_omni_purchase: parseFloat(ad.actions_omni_purchase) || 0,
+        });
       } else {
         const existing = groupMap.get(key);
-        const sumFields = [
-          'spend',
-          'actions_omni_purchase',
-          'revenue',
-          'impressions',
-          'clicks',
-          'cpm',
-          'cpc',
-          'ctr',
-          'roas',
-          'cpa',
-        ];
-        sumFields.forEach(field => {
-          if (ad[field] !== undefined && !isNaN(parseFloat(ad[field]))) {
-            existing[field] = (parseFloat(existing[field]) || 0) + parseFloat(ad[field]);
-          }
-        });
+        existing.totalcost += parseFloat(ad.totalcost) || 0;
+        existing.action_values_omni_purchase += parseFloat(ad.action_values_omni_purchase) || 0;
+        existing.actions_omni_purchase += parseFloat(ad.actions_omni_purchase) || 0;
       }
     });
-    groupMap.forEach(ad => grouped.push(ad));
-    return grouped;
+    // Recalcular CPA y otros campos derivados si es necesario en el componente de la card
+    return Array.from(groupMap.values());
   }
 
     const normalize = str => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -93,7 +83,7 @@ const Dashboard = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
           <div>
-            <p className="text-[11px] uppercase tracking-wide text-gray-400">Tienda Único</p>
+            <p className="text-[11px] uppercase tracking-wide text-gray-400">De Viaje</p>
             <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">Performance de Anuncios</h1>
             <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 text-[11px] rounded-full border border-gray-200 bg-white/70 text-gray-600">
               {humanLabel}
