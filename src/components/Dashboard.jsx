@@ -83,7 +83,7 @@ const Dashboard = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
           <div>
-            <p className="text-[11px] uppercase tracking-wide text-gray-400">De Viaje</p>
+            <p className="text-[11px] uppercase tracking-wide text-gray-400">Tienda Único</p>
             <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">Performance de Anuncios</h1>
             <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 text-[11px] rounded-full border border-gray-200 bg-white/70 text-gray-600">
               {humanLabel}
